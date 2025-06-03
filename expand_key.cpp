@@ -2,9 +2,9 @@
 
 using namespace std;
 
-void g(bitset<8> w_1, int round) {
+bitset<8> g_function(bitset<8> w_1, int round) {
 
-    cout << endl << "--------------Função g-------------" << endl;
+    //cout << endl << "--------------Função g-------------" << endl;
 
 
     bitset<4> n_0;
@@ -17,9 +17,9 @@ void g(bitset<8> w_1, int round) {
         n_1[i] = w_1[i];
     }
 
-    cout << w_1 << endl;
-    cout << n_0.to_ullong() << endl;
-    cout << n_1.to_ullong() << endl;
+    //cout << w_1 << endl;
+    //cout << n_0.to_ullong() << endl;
+    //cout << n_1.to_ullong() << endl;
 
 
     vector<bitset<4>> s_box = { 
@@ -35,15 +35,21 @@ void g(bitset<8> w_1, int round) {
 
     // juntando as metades apos passar pela s-box
     bitset<8> n(n_0_s_box.to_string().append(n_1_s_box.to_string()));
-
+    bitset<8> rconst;
     if (round == 1){
-
-        
+        rconst = 0b10001000;       
     }
+    else
+    {
+        rconst = 0b00110011;
+    }
+    //Aplicação do xor entre a word e round
+    n = n xor rconst;
+    return n;
 
 }
 
-void expand_key(bitset<16> chave, int round) {
+bitset<16> expand_key(bitset<16> chave, int round) {
 
         cout << endl << "--------------Expand Key-------------" << endl;
 
@@ -56,6 +62,24 @@ void expand_key(bitset<16> chave, int round) {
         w_0[i] = chave[i + 8];
         w_1[i] = chave[i];
     }
+    //dividimos a chave em duas words: w0 e w1
 
-    g(w_1, round);
+    bitset<8> w_2;
+    bitset<8> w_3;
+    //w2 é o resultado da g_function xor w0
+    //w3 é o resultado do xor da w2 com w1
+
+    w_2 = g_function(w_1, round) xor w_0;
+    w_3 = w_1 xor w_2;
+    cout<<"Chave "<<round<<": "<<w_2<<w_3<<endl;
+    //Juntar chaves
+    bitset<16> result;
+    for(int i =0;i<8;i++)
+    {
+        result[i] = w_3[i];
+        result[8+i] = w_2[i];
+    }
+    //cout<<result<<endl;
+    return result;
+    
 }

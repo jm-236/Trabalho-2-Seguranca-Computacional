@@ -4,16 +4,13 @@ using namespace std;
 string table = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 
 
+
 string nibbleTo64(bitset<16> bs)
 {
   bitset<6> arr[3];
   for(int i = 0;i<6;i++)
   {
     arr[0][5-i] = bs[i];
-  }
-
-  for(int i = 0;i<6;i++)
-  {
     arr[1][5-i] = bs[6+i];
   }
 
@@ -42,6 +39,3 @@ int main()
 
   cout<<nibbleTo64(bs)<<endl;
 }
-
-
-

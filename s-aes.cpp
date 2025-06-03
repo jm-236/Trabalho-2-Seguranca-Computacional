@@ -164,7 +164,9 @@ bitset<16> S_AES(bitset<16> mensagem, bitset<16> chave) {
 
     bitset<16> mensagem_apos_mix_columns = mix_columns(mensagem_apos_shift_rows);
 
-    expand_key(chave, 1);
+    bitset<16> chave_1,chave_2;
+    chave_1 = expand_key(chave, 1);
+    chave_2 = expand_key(chave, 2);
 
     return 0;
 }
