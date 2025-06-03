@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "expand_key.cpp"
 
 using namespace std;
 
@@ -15,11 +16,11 @@ bitset<16> s_nibbles(bitset<16> mensagem) {
     cout << endl << "--------------S-Nibbles-------------" << endl;
 
     vector<bitset<4>> s_box = { 
-                                0b1001, 0b0100, 0b1010, 0b1011,
-                                0b1101, 0b0001, 0b1000, 0b0101, 
-                                0b0110, 0b0010, 0b0000, 0b0011,
-                                0b1100, 0b1110, 0b1111, 0b0111 
-                            };
+        0b1001, 0b0100, 0b1010, 0b1011,
+        0b1101, 0b0001, 0b1000, 0b0101, 
+        0b0110, 0b0010, 0b0000, 0b0011,
+        0b1100, 0b1110, 0b1111, 0b0111 
+    };
 
     bitset<16> nova_mensagem;
     bitset<4> nibble;
@@ -76,7 +77,7 @@ bitset<16> shift_rows(bitset<16> mensagem) {
 
 bitset<16> mix_columns(bitset<16> mensagem) {
 
-    cout << endl << "--------------Shift-Rows-------------" << endl;
+    cout << endl << "--------------Mix Columns-------------" << endl;
 
     // Tabela de multiplicação em GF(16) com polinômio x^4 + x + 1
     vector<vector<int>> gf16_mult = {
@@ -156,7 +157,6 @@ bitset<16> mix_columns(bitset<16> mensagem) {
 bitset<16> S_AES(bitset<16> mensagem, bitset<16> chave) {
     
     bitset<16> mensagem_apos_round_key = add_round_key(mensagem, chave);
-    
 
     bitset<16> mensagem_apos_s_nibble = s_nibbles(mensagem_apos_round_key);
 
@@ -164,6 +164,7 @@ bitset<16> S_AES(bitset<16> mensagem, bitset<16> chave) {
 
     bitset<16> mensagem_apos_mix_columns = mix_columns(mensagem_apos_shift_rows);
 
+    expand_key(chave, 1);
 
     return 0;
 }
