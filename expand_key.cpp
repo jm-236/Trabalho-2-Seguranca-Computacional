@@ -19,7 +19,7 @@ bitset<8> g_function(bitset<8> w_1, int round) {
     }
 
     // troca
-    n_0 = temp;
+    temp = n_0;
     n_0 = n_1;
     n_1 = temp;
 
@@ -46,7 +46,7 @@ bitset<8> g_function(bitset<8> w_1, int round) {
     if (round == 1){
         rconst = 0b10000000;       
     }
-    else
+    else if (round == 2)
     {
         rconst = 0b00110000;
     }
@@ -76,9 +76,9 @@ bitset<16> expand_key(bitset<16> chave, int round) {
     //w2 é o resultado da g_function xor w0
     //w3 é o resultado do xor da w2 com w1
 
-    w_2 = g_function(w_1, round) xor w_0;
+    w_2 = g_function(w_1, 1) xor w_0;
     w_3 = w_1 xor w_2;
-    
+    //     cout << hex << w_3.to_ullong() << endl;    
     //Juntar chaves
     bitset<16> result;
     if (round == 1){
@@ -94,7 +94,7 @@ bitset<16> expand_key(bitset<16> chave, int round) {
     bitset<8> w_4;
     bitset<8> w_5;
 
-    w_4 = g_function(w_3, round) xor w_2;
+    w_4 = g_function(w_3, 2) xor w_2;
     w_5 = w_3 xor w_4;
     for(int i =0;i<8;i++)
     {
