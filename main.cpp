@@ -10,12 +10,12 @@ int main() {
 
     cout << "--------------Leitura da mensagem-------------" << endl;
     // bitset<16> mensagem = ler_mensagem();
-    bitset<16> mensagem = 0b0011111100011011;
+    bitset<16> mensagem = 0b0110111101101011;
     cout << "Mensagem lida: " << mensagem << endl;
 
     cout << endl << "--------------Leitura da chave-------------" << endl;
     // bitset<16> chave = ler_mensagem();
-    bitset<16> chave = 0b0111000101001001;
+    bitset<16> chave = 0b1010011100111011;
     cout << "Chave lida: " << chave << endl;
 
     bitset<16> mensagem_criptografada = S_AES(mensagem, chave);

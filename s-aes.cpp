@@ -168,6 +168,13 @@ bitset<16> S_AES(bitset<16> mensagem, bitset<16> chave) {
     chave_1 = expand_key(chave, 1);
     chave_2 = expand_key(chave, 2);
 
+    bitset<16> mensagem_apos_add_key_1 = add_round_key(mensagem_apos_mix_columns, chave_1);
+    bitset<16> mensagem_apos_snibbles_2 = s_nibbles(mensagem_apos_add_key_1);
+    bitset<16> mensagem_apos_shift_rows_2 = shift_rows(mensagem_apos_snibbles_2);
+
+    bitset<16> mensagem_apos_add_key_2 = add_round_key(mensagem_apos_shift_rows_2, chave_2);
+
+    cout << "Texto cifrado: " << mensagem_apos_add_key_2 << endl;
     return 0;
 }
 

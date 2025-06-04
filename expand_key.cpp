@@ -9,6 +9,7 @@ bitset<8> g_function(bitset<8> w_1, int round) {
 
     bitset<4> n_0;
     bitset<4> n_1;
+    bitset<4> temp;
 
     // separando w_1 na metade
     for (int i = 3; i >= 0; i--){
@@ -17,10 +18,10 @@ bitset<8> g_function(bitset<8> w_1, int round) {
         n_1[i] = w_1[i];
     }
 
-    //cout << w_1 << endl;
-    //cout << n_0.to_ullong() << endl;
-    //cout << n_1.to_ullong() << endl;
-
+    // troca
+    n_0 = temp;
+    n_0 = n_1;
+    n_1 = temp;
 
     vector<bitset<4>> s_box = { 
         0b1001, 0b0100, 0b1010, 0b1011,
@@ -30,18 +31,24 @@ bitset<8> g_function(bitset<8> w_1, int round) {
     };
 
     // aplicando s_box e invertendo as metades
-    bitset<4> n_0_s_box(s_box[n_1.to_ullong()]); 
-    bitset<4> n_1_s_box(s_box[n_0.to_ullong()]);
+    bitset<4> n_0_s_box(s_box[n_0.to_ullong()]); 
+    bitset<4> n_1_s_box(s_box[n_1.to_ullong()]);
 
     // juntando as metades apos passar pela s-box
-    bitset<8> n(n_0_s_box.to_string().append(n_1_s_box.to_string()));
+    bitset<8> n;
+    for (int i = 3; i >= 0; i--){
+        n[i + 4] = n_0_s_box[i];
+        n[i] = n_1_s_box[i];
+    }
+
+
     bitset<8> rconst;
     if (round == 1){
-        rconst = 0b10001000;       
+        rconst = 0b10000000;       
     }
     else
     {
-        rconst = 0b00110011;
+        rconst = 0b00110000;
     }
     //Aplicação do xor entre a word e round
     n = n xor rconst;
@@ -71,15 +78,30 @@ bitset<16> expand_key(bitset<16> chave, int round) {
 
     w_2 = g_function(w_1, round) xor w_0;
     w_3 = w_1 xor w_2;
-    cout<<"Chave "<<round<<": "<<w_2<<w_3<<endl;
+    
     //Juntar chaves
     bitset<16> result;
+    if (round == 1){
+        for(int i =0;i<8;i++)
+        {
+            result[i] = w_3[i];
+            result[8+i] = w_2[i];
+        }
+        cout<< "chave " << round <<":" <<result<<endl;
+        return result;
+    }
+    
+    bitset<8> w_4;
+    bitset<8> w_5;
+
+    w_4 = g_function(w_3, round) xor w_2;
+    w_5 = w_3 xor w_4;
     for(int i =0;i<8;i++)
     {
-        result[i] = w_3[i];
-        result[8+i] = w_2[i];
+        result[i] = w_5[i];
+        result[8+i] = w_4[i];
     }
-    //cout<<result<<endl;
+    cout<< "chave " << round <<":" <<result<<endl;
     return result;
-    
+
 }
