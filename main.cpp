@@ -65,5 +65,11 @@ int main() {
     base64_encoded = converter_base64(texto_cifrado);
 
     cout << "Texto em base 64: " << base64_encoded << endl;
+    
+    texto_cifrado = cifrar_CFB(mensagem, chave_str, vi);
+    base64_encoded = converter_base64(texto_cifrado);
+
+    cout << "Texto em base 64: " << base64_encoded << endl;
+    
     return 0;
 }
