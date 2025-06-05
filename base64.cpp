@@ -1,12 +1,13 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-string table = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
+char table[65] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
 
 
 
 string nibbleTo64(bitset<16> bs)
 {
+  cout<<"Bs ="<<bs<<endl;
   bitset<6> arr[3];
   for(int i = 0;i<6;i++)
   {
@@ -24,18 +25,11 @@ string nibbleTo64(bitset<16> bs)
   long a = arr[0].to_ulong();
   long b = arr[1].to_ulong();
   long c = arr[2].to_ulong();
-  cout<<arr[0]<<endl;
-  cout<<arr[1]<<endl;
-  cout<<arr[2]<<endl;
-  cout<<a<<" "<<b<<" "<<c<<endl;
-  cout<<table[a]<<" "<<table[b]<<" "<<table[c]<<endl;
-
-  return "Hello, World!";
-}
-
-int main()
-{
-  bitset<16> bs = 0b1010011000010010;
-
-  cout<<nibbleTo64(bs)<<endl;
+  // cout<<arr[0]<<endl;
+  // cout<<arr[1]<<endl;
+  // cout<<arr[2]<<endl;
+  // cout<<a<<" "<<b<<" "<<c<<endl;
+  // cout<<table[a]<<" "<<table[b]<<" "<<table[c]<<endl;
+  char result[3] = {table[a],table[b],table[c]};
+  return result;
 }

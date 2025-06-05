@@ -175,6 +175,6 @@ bitset<16> S_AES(bitset<16> mensagem, bitset<16> chave) {
     bitset<16> mensagem_apos_add_key_2 = add_round_key(mensagem_apos_shift_rows_2, chave_2);
 
     cout << "Texto cifrado: " << mensagem_apos_add_key_2 << endl;
-    return 0;
+    return mensagem_apos_add_key_2;
 }
 
