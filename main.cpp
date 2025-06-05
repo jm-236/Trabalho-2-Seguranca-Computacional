@@ -52,11 +52,17 @@ int main() {
 
     // Padding para múltiplos de 16 bytes (PKCS#7 manual)
     cout << "--------------Algoritmo AES real com vários modos de operação-------------" << endl << endl;
-    string mensagem = "Mensagem secreta!";
+    string mensagem = "cetacio";
     string chave_str = "minha_chave_1234"; // exatamente 16 bytes
 
     string texto_cifrado = cifrar_ECB(mensagem, chave_str);
     string base64_encoded = converter_base64(texto_cifrado);
+
+    cout << "Texto em base 64: " << base64_encoded << endl;
+
+    string vi = "vetor de inicialização";
+    texto_cifrado = cifrar_CBC(mensagem, chave_str, vi);
+    base64_encoded = converter_base64(texto_cifrado);
 
     cout << "Texto em base 64: " << base64_encoded << endl;
     return 0;
