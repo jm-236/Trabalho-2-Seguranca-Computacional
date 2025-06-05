@@ -33,3 +33,14 @@ string nibbleTo64(bitset<16> bs)
   char result[3] = {table[a],table[b],table[c]};
   return result;
 }
+
+string converter_base64 (string texto_cifrado) {
+
+  // codificando para base 64
+  string base64_encoded;
+  CryptoPP::StringSource ss(reinterpret_cast<const CryptoPP::byte*>(texto_cifrado.data()), texto_cifrado.size(), true,
+      new CryptoPP::Base64Encoder(new CryptoPP::StringSink(base64_encoded), false) // false = sem \n
+  );  
+
+  return base64_encoded;
+}

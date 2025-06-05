@@ -1,27 +1,28 @@
 #include <bits/stdc++.h>
 #include "ler_mensagem.cpp"
 #include "s-aes.cpp"
-#include "base64.cpp"
-#include "encript_saes_ecb.cpp"
 #include <cryptopp/aes.h>
 #include <cryptopp/modes.h>
 #include <cryptopp/filters.h>
+#include <cryptopp/base64.h>
+#include "base64.cpp"
+#include "encript_saes_ecb.cpp"
+#include "AES.cpp"
 
 using namespace std;
-using namespace CryptoPP;
 
 int main() {
 
-    cout << "--------------Algoritmo S-AES-------------" << endl << endl;
+    // cout << "--------------Algoritmo S-AES-------------" << endl << endl;
 
     // cout << "--------------Leitura da mensagem-------------" << endl;
     // bitset<16> mensagem = ler_mensagem();
-    bitset<16> mensagem = 0b0110111101101011;
+    // bitset<16> mensagem = 0b0110111101101011;
     // cout << "Mensagem lida: " << mensagem << endl;
 
     // cout << endl << "--------------Leitura da chave-------------" << endl;
     // bitset<16> chave = ler_mensagem();
-    bitset<16> chave = 0b1010011100111011;
+    // bitset<16> chave = 0b1010011100111011;
     // cout << "Chave lida: " << chave << endl;
 
     // Parte 1: implementação cifragem S-AES 
@@ -49,29 +50,14 @@ int main() {
 
     // Parte 3: implementando AES
 
-    string plaintext = "Mensagem secreta!";
-    string ciphertext, decrypted;
+    // Padding para múltiplos de 16 bytes (PKCS#7 manual)
+    cout << "--------------Algoritmo AES real com vários modos de operação-------------" << endl << endl;
+    string mensagem = "Mensagem secreta!";
+    string chave_str = "minha_chave_1234"; // exatamente 16 bytes
 
-    CryptoPP::byte key[AES::DEFAULT_KEYLENGTH] = {0}; // 16 bytes
-    CryptoPP::byte iv[AES::BLOCKSIZE] = {0}; // 16 bytes
+    string texto_cifrado = cifrar_ECB(mensagem, chave_str);
+    string base64_encoded = converter_base64(texto_cifrado);
 
-    // Encrypt
-    CBC_Mode<AES>::Encryption encryptor(key, sizeof(key), iv);
-    StringSource ss1(plaintext, true,
-        new StreamTransformationFilter(encryptor,
-            new StringSink(ciphertext)
-        )
-    );
-
-    // Decrypt
-    CBC_Mode<AES>::Decryption decryptor(key, sizeof(key), iv);
-    StringSource ss2(ciphertext, true,
-        new StreamTransformationFilter(decryptor,
-            new StringSink(decrypted)
-        )
-    );
-
-    cout << "Mensagem encriptada: " << ciphertext << endl;
-    cout << "Decrypted: " << decrypted << endl;
+    cout << "Texto em base 64: " << base64_encoded << endl;
     return 0;
 }
