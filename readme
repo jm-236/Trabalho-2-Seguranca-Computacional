@@ -1,0 +1,3 @@
+sudo apt install libcrypto++-dev libcrypto++-doc libcrypto++-utils
+g++ main.cpp -lcryptopp 
+./a.out

@@ -122,3 +122,89 @@ string cifrar_CFB (string mensagem, string chave_str, string vi) {
 
    return texto_cifrado;
 }
+
+string cifrar_OFB(string mensagem, string chave_str, string vi)
+{
+    vi.resize(CryptoPP::AES::BLOCKSIZE);
+    cout << "Cifrando o texto \'" << mensagem << "\' em modo OFB..." << endl;
+
+    size_t original_length = mensagem.size();
+    int padding = CryptoPP::AES::BLOCKSIZE - (mensagem.size() % CryptoPP::AES::BLOCKSIZE);
+    mensagem.append(padding, static_cast<char>(padding));
+
+    string texto_cifrado;
+    texto_cifrado.resize(mensagem.size()); // precisa reservar espaço
+
+   // Chave
+   CryptoPP::byte key[CryptoPP::AES::DEFAULT_KEYLENGTH] = {0}; // chave de 16 bytes zerada
+   memcpy(key, chave_str.data(), CryptoPP::AES::DEFAULT_KEYLENGTH);
+
+   // AES puro
+   CryptoPP::AES::Encryption aes;
+   aes.SetKey(key, sizeof(key));
+
+   for (size_t i = 0; i < mensagem.size(); i += CryptoPP::AES::BLOCKSIZE) {
+       
+        string vi_cifrado;
+        vi_cifrado.resize(CryptoPP::AES::BLOCKSIZE);   
+
+       // cifrando vi 
+       aes.ProcessBlock(
+           reinterpret_cast<const CryptoPP::byte*>(&vi[0]),
+           reinterpret_cast<CryptoPP::byte*>(&vi_cifrado[0])
+       );
+       // xor de vi cifrado com a mensagem
+       for (int j = 0; j < CryptoPP::AES::BLOCKSIZE; j++){
+            texto_cifrado[j + i] = mensagem[j + i] xor vi_cifrado[j];  
+       }
+       // vi =  proximo bloco
+       vi = texto_cifrado;
+   }
+
+   return texto_cifrado;
+}
+
+string cifrar_CTR(string mensagem, string chave_str)
+{
+    int vi = 0;
+    cout << "Cifrando o texto \'" << mensagem << "\' em modo CTR..." << endl;
+
+    size_t original_length = mensagem.size();
+    int padding = CryptoPP::AES::BLOCKSIZE - (mensagem.size() % CryptoPP::AES::BLOCKSIZE);
+    mensagem.append(padding, static_cast<char>(padding));
+
+    string texto_cifrado;
+    texto_cifrado.resize(mensagem.size()); // precisa reservar espaço
+
+   // Chave
+   CryptoPP::byte key[CryptoPP::AES::DEFAULT_KEYLENGTH] = {0}; // chave de 16 bytes zerada
+   memcpy(key, chave_str.data(), CryptoPP::AES::DEFAULT_KEYLENGTH);
+
+   // AES puro
+   CryptoPP::AES::Encryption aes;
+   aes.SetKey(key, sizeof(key));
+
+   for (size_t i = 0; i < mensagem.size(); i += CryptoPP::AES::BLOCKSIZE) {
+       
+        string vi_cifrado;
+        vi_cifrado.resize(CryptoPP::AES::BLOCKSIZE);   
+
+       // cifrando vi 
+        CryptoPP::byte counter[CryptoPP::AES::BLOCKSIZE] = {0};
+        memcpy(counter, &vi, sizeof(vi));
+        aes.ProcessBlock(
+            counter,
+            reinterpret_cast<CryptoPP::byte*>(&vi_cifrado[0])
+        );
+        
+       // xor de vi cifrado com a mensagem
+       for (int j = 0; j < CryptoPP::AES::BLOCKSIZE; j++){
+            texto_cifrado[j + i] = mensagem[j + i] xor vi_cifrado[j];  
+       }
+       // vi =  proximo bloco
+       vi++;
+   }
+
+   return texto_cifrado;
+
+}
