@@ -8,8 +8,11 @@
 #include "base64.cpp"
 #include "encript_saes_ecb.cpp"
 #include "AES.cpp"
+#include <chrono>
 
 using namespace std;
+
+
 
 int main() {
 
@@ -52,7 +55,7 @@ int main() {
 
     // Padding para múltiplos de 16 bytes (PKCS#7 manual)
     cout << "--------------Algoritmo AES real com vários modos de operação-------------" << endl << endl;
-    string mensagem = "cetacio";
+    string mensagem = "Bom dia, eu gostaria de receber nota maxima no trbaalho, pois me esforcei muito e paassamos muito tempo programando";
     string chave_str = "minha_chave_1234"; // exatamente 16 bytes
 
     string texto_cifrado = cifrar_ECB(mensagem, chave_str);

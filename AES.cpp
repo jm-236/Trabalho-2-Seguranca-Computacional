@@ -1,10 +1,18 @@
 #include <bits/stdc++.h>
 
 using namespace std;
+using namespace std::chrono;
+
+#define medirInc auto inicio = high_resolution_clock::now();
+#define medirFim auto fim = high_resolution_clock::now(); auto duracao = duration_cast<milliseconds>(fim-inicio);cout<<"Tempo de execucao: "<<duracao.count()<<"ms"<<endl;
+
+
+
 
 string cifrar_ECB (string mensagem, string chave_str) {
 
     cout << "Cifrando o texto \'" << mensagem << "\' em modo ECB..." << endl;
+    medirInc;
 
     size_t original_length = mensagem.size();
 
@@ -31,14 +39,14 @@ string cifrar_ECB (string mensagem, string chave_str) {
             reinterpret_cast<CryptoPP::byte*>(&texto_cifrado[i])
         );
     }
-
+    medirFim;
     return texto_cifrado;
 }
 
 string cifrar_CBC (string mensagem, string chave_str, string vi) {
 
     cout << "Cifrando o texto \'" << mensagem << "\' em modo CBC..." << endl;
-
+    medirInc;
     // ajustando tamanho do vi
     vi.resize(CryptoPP::AES::BLOCKSIZE);
     
@@ -78,15 +86,15 @@ string cifrar_CBC (string mensagem, string chave_str, string vi) {
         // atualizando vi
         vi = texto_cifrado.substr(i, CryptoPP::AES::BLOCKSIZE);
     }
-
+    medirFim;
     return texto_cifrado;
 }
 
 string cifrar_CFB (string mensagem, string chave_str, string vi) {
-
+    medirInc;
     vi.resize(CryptoPP::AES::BLOCKSIZE);
     cout << "Cifrando o texto \'" << mensagem << "\' em modo CFB..." << endl;
-
+    
     size_t original_length = mensagem.size();
     int padding = CryptoPP::AES::BLOCKSIZE - (mensagem.size() % CryptoPP::AES::BLOCKSIZE);
     mensagem.append(padding, static_cast<char>(padding));
@@ -119,12 +127,13 @@ string cifrar_CFB (string mensagem, string chave_str, string vi) {
        // vi =  proximo bloco
        vi = texto_cifrado.substr(i, CryptoPP::AES::BLOCKSIZE);
    }
-
+   medirFim
    return texto_cifrado;
 }
 
 string cifrar_OFB(string mensagem, string chave_str, string vi)
 {
+    medirInc;
     vi.resize(CryptoPP::AES::BLOCKSIZE);
     cout << "Cifrando o texto \'" << mensagem << "\' em modo OFB..." << endl;
 
@@ -160,12 +169,13 @@ string cifrar_OFB(string mensagem, string chave_str, string vi)
        // vi =  proximo bloco
        vi = texto_cifrado;
    }
-
+   medirFim;
    return texto_cifrado;
 }
 
 string cifrar_CTR(string mensagem, string chave_str)
 {
+    medirInc;
     int vi = 0;
     cout << "Cifrando o texto \'" << mensagem << "\' em modo CTR..." << endl;
 
@@ -196,7 +206,7 @@ string cifrar_CTR(string mensagem, string chave_str)
             counter,
             reinterpret_cast<CryptoPP::byte*>(&vi_cifrado[0])
         );
-        
+
        // xor de vi cifrado com a mensagem
        for (int j = 0; j < CryptoPP::AES::BLOCKSIZE; j++){
             texto_cifrado[j + i] = mensagem[j + i] xor vi_cifrado[j];  
@@ -204,7 +214,7 @@ string cifrar_CTR(string mensagem, string chave_str)
        // vi =  proximo bloco
        vi++;
    }
-
+   medirFim;
    return texto_cifrado;
 
 }
