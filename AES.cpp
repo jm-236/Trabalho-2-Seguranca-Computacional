@@ -4,13 +4,32 @@ using namespace std;
 using namespace std::chrono;
 
 #define medirInc auto inicio = high_resolution_clock::now();
-#define medirFim auto fim = high_resolution_clock::now(); auto duracao = duration_cast<milliseconds>(fim-inicio);cout<<"Tempo de execucao: "<<duracao.count()<<"ms"<<endl;
+#define medirFim auto fim = high_resolution_clock::now(); auto duracao = duration_cast<microseconds>(fim-inicio);cout<<"Tempo de execucao: "<<duracao.count()<<" microssegundos (µs)"<<endl;
 
 
+void aquecer_biblioteca_crypto() {
+    cout << "--- Aquecendo a biblioteca para medições precisas ---" << endl;
+    try {
+        CryptoPP::byte dummy_key[CryptoPP::AES::DEFAULT_KEYLENGTH] = {0};
+        CryptoPP::byte dummy_block[CryptoPP::AES::BLOCKSIZE] = {0};
+        CryptoPP::byte dummy_output[CryptoPP::AES::BLOCKSIZE] = {0};
+        CryptoPP::AES::Encryption aes_encryptor;
 
+        //    Isso força o carregamento do código e dos dados para o cache da CPU.
+        for (int i = 0; i < 5; ++i) {
+            aes_encryptor.SetKey(dummy_key, sizeof(dummy_key));
+            aes_encryptor.ProcessBlock(dummy_block, dummy_output);
+        }
+
+    } catch (const CryptoPP::Exception& e) {
+        cerr << "Erro durante o aquecimento: " << e.what() << endl;
+    }
+    cout << "--- Aquecimento concluído. Iniciando medições. ---\n" << endl;
+}
 
 string cifrar_ECB (string mensagem, string chave_str) {
 
+    cout << "--------------Modo ECB-------------" << endl << endl;
     cout << "Cifrando o texto \'" << mensagem << "\' em modo ECB..." << endl;
     medirInc;
 
@@ -45,6 +64,7 @@ string cifrar_ECB (string mensagem, string chave_str) {
 
 string cifrar_CBC (string mensagem, string chave_str, string vi) {
 
+    cout << "--------------Modo CBC-------------" << endl << endl;
     cout << "Cifrando o texto \'" << mensagem << "\' em modo CBC..." << endl;
     medirInc;
     // ajustando tamanho do vi
@@ -91,10 +111,12 @@ string cifrar_CBC (string mensagem, string chave_str, string vi) {
 }
 
 string cifrar_CFB (string mensagem, string chave_str, string vi) {
+    
+    cout << "--------------Modo CFB-------------" << endl << endl;
+    cout << "Cifrando o texto \'" << mensagem << "\' em modo CFB..." << endl;
     medirInc;
     vi.resize(CryptoPP::AES::BLOCKSIZE);
-    cout << "Cifrando o texto \'" << mensagem << "\' em modo CFB..." << endl;
-    
+
     size_t original_length = mensagem.size();
     int padding = CryptoPP::AES::BLOCKSIZE - (mensagem.size() % CryptoPP::AES::BLOCKSIZE);
     mensagem.append(padding, static_cast<char>(padding));
@@ -133,10 +155,10 @@ string cifrar_CFB (string mensagem, string chave_str, string vi) {
 
 string cifrar_OFB(string mensagem, string chave_str, string vi)
 {
+    cout << "--------------Modo OFB-------------" << endl << endl;
+    cout << "Cifrando o texto \'" << mensagem << "\' em modo OFB..." << endl;
     medirInc;
     vi.resize(CryptoPP::AES::BLOCKSIZE);
-    cout << "Cifrando o texto \'" << mensagem << "\' em modo OFB..." << endl;
-
     size_t original_length = mensagem.size();
     int padding = CryptoPP::AES::BLOCKSIZE - (mensagem.size() % CryptoPP::AES::BLOCKSIZE);
     mensagem.append(padding, static_cast<char>(padding));
@@ -175,9 +197,11 @@ string cifrar_OFB(string mensagem, string chave_str, string vi)
 
 string cifrar_CTR(string mensagem, string chave_str)
 {
+    
+    cout << "--------------Modo CTR-------------" << endl << endl;
+    cout << "Cifrando o texto \'" << mensagem << "\' em modo CTR..." << endl;
     medirInc;
     int vi = 0;
-    cout << "Cifrando o texto \'" << mensagem << "\' em modo CTR..." << endl;
 
     size_t original_length = mensagem.size();
     int padding = CryptoPP::AES::BLOCKSIZE - (mensagem.size() % CryptoPP::AES::BLOCKSIZE);
