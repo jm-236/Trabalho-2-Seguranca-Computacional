@@ -1,90 +1,101 @@
 #include <bits/stdc++.h>
-#include "ler_mensagem.cpp"
-#include "s-aes.cpp"
 #include <cryptopp/aes.h>
 #include <cryptopp/modes.h>
 #include <cryptopp/filters.h>
 #include <cryptopp/base64.h>
+#include <chrono>
+
+// Arquivos do projeto
+#include "ler_mensagem.cpp"
+#include "s-aes.cpp"
 #include "base64.cpp"
 #include "encript_saes_ecb.cpp"
 #include "AES.cpp"
-#include <chrono>
 
 using namespace std;
 
-
-
 int main() {
+    int parte;
+    cout << "Qual parte deseja ver ? (1, 2 ou 3): ";
+    if (!(cin >> parte)) {
+        cerr << "Entrada inválida!" << endl;
+        return 1;
+    }
 
-    // cout << "--------------Algoritmo S-AES-------------" << endl << endl;
+    switch (parte) {
+        case 1: {
+            cout << "--------------Algoritmo S-AES-------------\n\n";
 
-    // cout << "--------------Leitura da mensagem-------------" << endl;
-    // bitset<16> mensagem = ler_mensagem();
-    // bitset<16> mensagem = 0b0110111101101011;
-    // cout << "Mensagem lida: " << mensagem << endl;
+            cout << "--------------Leitura da mensagem-------------\n";
+            bitset<16> mensagem = 0b0110111101101011;
+            cout << "Mensagem lida: " << mensagem << endl;
 
-    // cout << endl << "--------------Leitura da chave-------------" << endl;
-    // bitset<16> chave = ler_mensagem();
-    // bitset<16> chave = 0b1010011100111011;
-    // cout << "Chave lida: " << chave << endl;
+            cout << "\n--------------Leitura da chave-------------\n";
+            bitset<16> chave = 0b1010011100111011;
+            cout << "Chave lida: " << chave << endl;
 
-    // Parte 1: implementação cifragem S-AES 
-    // bitset<16> mensagem_criptografada = S_AES(mensagem, chave);
-    // string mensagem_base64 = nibbleTo64(mensagem_criptografada);
-    // cout << "Mensagem criptografada em base 64: " << mensagem_base64 << endl;
+            bitset<16> mensagem_criptografada = S_AES(mensagem, chave);
+            string mensagem_base64 = nibbleTo64(mensagem_criptografada);
+            cout << "Mensagem criptografada em base64: " << mensagem_base64 << endl;
+            break;
+        }
 
-    // Parte 2: Modo ECB
-    // vector<bitset<16>> bloco_ecb = {
-    // 0b0110111101101011, 0b1010000011110001,
-    // 0b0001110101000111, 0b0011100001010000
-    // };
+        case 2: {
+            cout << "--------------Modo ECB (S-AES)-------------\n\n";
 
-    // mesmos bitsets do primeiro, o terceiro e o quarto viraram os dois primeiros 
-    // enquanto os dois primeiros viraram os dois ultimos
-    // vector<bitset<16>> bloco_ecb_2 = {
-    // 0b0001110101000111, 0b0011100001010000,
-    // 0b0110111101101011, 0b1010000011110001,
-    // };
+            vector<bitset<16>> bloco_ecb = {
+                0b0110111101101011, 0b1010000011110001,
+                0b0001110101000111, 0b0011100001010000
+            };
 
-    // vector<bitset<16>>bloco_encriptado = encript_saes_ecb(bloco_ecb, chave);
-    // vector<bitset<16>>bloco_encriptado_2 = encript_saes_ecb(bloco_ecb_2, chave);
+            vector<bitset<16>> bloco_ecb_2 = {
+                0b0001110101000111, 0b0011100001010000,
+                0b0110111101101011, 0b1010000011110001
+            };
 
-    // comparar_blocos(bloco_encriptado, bloco_encriptado_2);
+            bitset<16> chave = 0b1010011100111011;
 
-    // Parte 3: implementando AES
+            auto bloco_encriptado = encript_saes_ecb(bloco_ecb, chave);
+            auto bloco_encriptado_2 = encript_saes_ecb(bloco_ecb_2, chave);
 
-    // Padding para múltiplos de 16 bytes (PKCS#7 manual)
-    cout << "--------------Algoritmo AES real com vários modos de operação-------------" << endl << endl;
-    string mensagem = "Bom dia, eu gostaria de receber nota maxima no trabalho, pois nos esforçamos muito e passamos muito tempo programando";
-    string chave_str = "minha_chave_1234"; // exatamente 16 bytes
+            comparar_blocos(bloco_ecb, bloco_ecb_2);
+            comparar_blocos(bloco_encriptado, bloco_encriptado_2);
+            break;
+        }
 
-    aquecer_biblioteca_crypto();
+        case 3: {
+            cout << "--------------Algoritmo AES real com vários modos de operação-------------\n\n";
 
-    string texto_cifrado = cifrar_ECB(mensagem, chave_str);
-    string base64_encoded = converter_base64(texto_cifrado);
+            string mensagem_AES = "Bom dia, eu gostaria de receber nota 10 no trabalho, pois nos esforçamos muito e passamos muito tempo programando";
+            string chave_str = "minha_chave_1234"; // deve ter 16 bytes
 
-    cout << "Texto em base 64: " << base64_encoded << endl;
+            aquecer_biblioteca_crypto();
 
-    string vi = "vetor de inicialização";
-    texto_cifrado = cifrar_CBC(mensagem, chave_str, vi);
-    base64_encoded = converter_base64(texto_cifrado);
+            string texto_cifrado = cifrar_ECB(mensagem_AES, chave_str);
+            cout << "Base64: " << converter_base64(texto_cifrado) << endl;
 
-    cout << "Texto em base 64: " << base64_encoded << endl;
-    
-    texto_cifrado = cifrar_CFB(mensagem, chave_str, vi);
-    base64_encoded = converter_base64(texto_cifrado);
+            string vi = "vetor de inicialização"; // deve ter 16 bytes no mínimo
+            vi.resize(CryptoPP::AES::BLOCKSIZE);  // garante tamanho compatível
 
-    cout << "Texto em base 64: " << base64_encoded << endl;
+            texto_cifrado = cifrar_CBC(mensagem_AES, chave_str, vi);
+            cout << "Base64: " << converter_base64(texto_cifrado) << endl;
 
-    texto_cifrado = cifrar_OFB(mensagem, chave_str, vi);
-    base64_encoded = converter_base64(texto_cifrado);
+            texto_cifrado = cifrar_CFB(mensagem_AES, chave_str, vi);
+            cout << "Base64: " << converter_base64(texto_cifrado) << endl;
 
-    cout << "Texto em base 64: " << base64_encoded << endl;
+            texto_cifrado = cifrar_OFB(mensagem_AES, chave_str, vi);
+            cout << "Base64: " << converter_base64(texto_cifrado) << endl;
 
-    texto_cifrado = cifrar_CTR(mensagem, chave_str);
-    base64_encoded = converter_base64(texto_cifrado);
+            texto_cifrado = cifrar_CTR(mensagem_AES, chave_str);
+            cout << "Base64: " << converter_base64(texto_cifrado) << endl;
 
-    cout << "Texto em base 64: " << base64_encoded << endl;
-    
+            break;
+        }
+
+        default:
+            cerr << "Parte inválida. Escolha 1, 2 ou 3." << endl;
+            break;
+    }
+
     return 0;
 }
